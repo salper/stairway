@@ -14,44 +14,19 @@ describe('scheduler', () => {
         level: 1,
         active: true,
         observers: [],
-        lastTransactionId: 0,
-        updateState: sinon.spy((transactionId, next) => next())
+        updateState: sinon.spy(next => next())
       });
 
     it('should update node', () => {
       scheduleAndRun(node);
       expect(node.updateState).to.have.been.calledOnce;
-      expect(node.updateState).to.have.been.calledWith(
-        sinon.match.number, sinon.match.func);
+      expect(node.updateState).to.have.been.calledWith(sinon.match.func);
     });
 
     it('should not allow cascading update', () => {
       node.updateState = () => scheduleAndRun(node);
       expect(scheduleAndRun.bind(null, node)).to.throw(
         'Scheduler is running, avoid cascading updates');
-    });
-
-    it('should increment transaction ID', () => {
-      const transactionIds = [];
-      node.updateState = sinon.spy((transactionId, next) => {
-        transactionIds.push(transactionId);
-        next();
-      });
-      scheduleAndRun(node);
-      scheduleAndRun(node);
-      expect(node.updateState).to.have.been.calledTwice;
-      expect(transactionIds[1]).to.equals(transactionIds[0] + 1);
-    });
-
-    it('should update lesser transaction IDs', () => {
-      node.updateState = sinon.spy((transactionId, next) => {
-        node.lastTransactionId = transactionId + 1;
-        next();
-      });
-      scheduleAndRun(node);
-      node.updateState.reset();
-      scheduleAndRun(node);
-      expect(node.updateState).to.not.have.been.called;
     });
 
     it('should not update inactive node', () => {
@@ -69,10 +44,7 @@ describe('scheduler', () => {
         level: 1,
         active: true,
         observers: [],
-        updateState: sinon.spy(function (transactionId, next) {
-          this.lastTransactionId = transactionId;
-          next();
-        })
+        updateState: sinon.spy(next => next())
       }, props);
 
       nodes = {};
