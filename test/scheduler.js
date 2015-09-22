@@ -13,7 +13,7 @@ describe('scheduler', () => {
       node = {
         level: 1,
         active: true,
-        observers: [],
+        children: [],
         updateState: sinon.spy(next => next())
       });
 
@@ -43,7 +43,7 @@ describe('scheduler', () => {
       const createNode = props => Object.assign({
         level: 1,
         active: true,
-        observers: [],
+        children: [],
         updateState: sinon.spy(next => next())
       }, props);
 
@@ -57,13 +57,13 @@ describe('scheduler', () => {
       nodes.nodeG = createNode({level: 2});
       nodes.nodeH = createNode({level: 6});
 
-      nodes.nodeA.observers.push(nodes.nodeB, nodes.nodeG);
-      nodes.nodeB.observers.push(nodes.nodeC, nodes.nodeD);
-      nodes.nodeC.observers.push(nodes.nodeE);
-      nodes.nodeD.observers.push(nodes.nodeF);
-      nodes.nodeE.observers.push(nodes.nodeF);
-      nodes.nodeF.observers.push(nodes.nodeH);
-      nodes.nodeG.observers.push(nodes.nodeH);
+      nodes.nodeA.children.push(nodes.nodeB, nodes.nodeG);
+      nodes.nodeB.children.push(nodes.nodeC, nodes.nodeD);
+      nodes.nodeC.children.push(nodes.nodeE);
+      nodes.nodeD.children.push(nodes.nodeF);
+      nodes.nodeE.children.push(nodes.nodeF);
+      nodes.nodeF.children.push(nodes.nodeH);
+      nodes.nodeG.children.push(nodes.nodeH);
     });
 
     it('should update each node once', () => {
